@@ -1,0 +1,519 @@
+/* =========================================================
+   DASHBOARD CARD - MODERN UI
+========================================================= */
+
+.dashboard-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 142px;
+  padding: 17px 18px;
+  overflow: hidden;
+
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 6px 18px rgba(15, 23, 42, 0.045);
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+/* =========================================================
+   TOP BLUE ACCENT
+========================================================= */
+
+.dashboard-card::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+
+  height: 3px;
+
+  border-radius: 0 0 6px 6px;
+
+  background: #2563eb;
+
+  opacity: 0;
+
+  transition: opacity 0.22s ease;
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+
+  border-color: #d8e4f5;
+
+  box-shadow:
+    0 4px 8px rgba(15, 23, 42, 0.035),
+    0 14px 30px rgba(37, 99, 235, 0.08);
+}
+
+.dashboard-card:hover::before {
+  opacity: 1;
+}
+
+/* =========================================================
+   CARD TOP
+========================================================= */
+
+.dashboard-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 38px;
+
+  margin-bottom: 12px;
+}
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.dashboard-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 39px;
+  height: 39px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #dbeafe;
+  border-radius: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #eff6ff 0%,
+    #e8f1ff 100%
+  );
+
+  color: #2563eb;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover .dashboard-card-icon {
+  transform: scale(1.05);
+
+  box-shadow:
+    0 5px 12px rgba(37, 99, 235, 0.12);
+}
+
+/* =========================================================
+   TREND
+========================================================= */
+
+.dashboard-trend {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  padding: 4px 8px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+.dashboard-trend svg {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.dashboard-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.dashboard-card-title {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #667085;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  line-height: 1.4;
+
+  letter-spacing: 0.01em;
+}
+
+/* =========================================================
+   VALUE
+========================================================= */
+
+.dashboard-card-value {
+  display: block;
+
+  color: #101828;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  font-size: 28px;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.045em;
+
+  word-break: break-word;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.dashboard-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-top: auto;
+  padding-top: 10px;
+
+  color: #98a2b3;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  font-size: 10px;
+  font-weight: 500;
+
+  line-height: 1.35;
+}
+
+.dashboard-card-footer span {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   DEFAULT
+========================================================= */
+
+.dashboard-card-default .dashboard-card-icon {
+  border-color: #dbeafe;
+
+  background: linear-gradient(
+    135deg,
+    #eff6ff,
+    #e7f0ff
+  );
+
+  color: #2563eb;
+}
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.dashboard-card-success::before {
+  background: #16a34a;
+}
+
+.dashboard-card-success .dashboard-card-icon {
+  border-color: #bbf7d0;
+
+  background: linear-gradient(
+    135deg,
+    #f0fdf4,
+    #e9f9ef
+  );
+
+  color: #16a34a;
+}
+
+.dashboard-card-success:hover {
+  border-color: #ccebd7;
+}
+
+/* =========================================================
+   WARNING
+========================================================= */
+
+.dashboard-card-warning::before {
+  background: #d97706;
+}
+
+.dashboard-card-warning .dashboard-card-icon {
+  border-color: #fde68a;
+
+  background: linear-gradient(
+    135deg,
+    #fffbeb,
+    #fff8df
+  );
+
+  color: #d97706;
+}
+
+.dashboard-card-warning:hover {
+  border-color: #f4dfaa;
+}
+
+/* =========================================================
+   DANGER
+========================================================= */
+
+.dashboard-card-danger::before {
+  background: #dc2626;
+}
+
+.dashboard-card-danger .dashboard-card-icon {
+  border-color: #fecaca;
+
+  background: linear-gradient(
+    135deg,
+    #fef2f2,
+    #feecec
+  );
+
+  color: #dc2626;
+}
+
+.dashboard-card-danger:hover {
+  border-color: #f3caca;
+}
+
+/* =========================================================
+   PURPLE
+========================================================= */
+
+.dashboard-card-purple::before {
+  background: #7c3aed;
+}
+
+.dashboard-card-purple .dashboard-card-icon {
+  border-color: #ddd6fe;
+
+  background: linear-gradient(
+    135deg,
+    #f5f3ff,
+    #f1edff
+  );
+
+  color: #7c3aed;
+}
+
+.dashboard-card-purple:hover {
+  border-color: #ded7f5;
+}
+
+/* =========================================================
+   TREND - WARNING
+========================================================= */
+
+.dashboard-card-warning .dashboard-trend {
+  border-color: #fde68a;
+
+  background: #fffbeb;
+
+  color: #b45309;
+}
+
+/* =========================================================
+   TREND - DANGER
+========================================================= */
+
+.dashboard-card-danger .dashboard-trend {
+  border-color: #fecaca;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+/* =========================================================
+   DASHBOARD GRID
+========================================================= */
+
+.dashboard-card-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 15px;
+
+  width: 100%;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+  .dashboard-card-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+  }
+
+  .dashboard-card {
+    min-height: 140px;
+  }
+
+  .dashboard-card-value {
+    font-size: 26px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+  .dashboard-card-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .dashboard-card {
+    min-height: 135px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+  }
+
+  .dashboard-card::before {
+    left: 15px;
+    right: 15px;
+  }
+
+  .dashboard-card-top {
+    margin-bottom: 10px;
+  }
+
+  .dashboard-card-icon {
+    width: 37px;
+    height: 37px;
+  }
+
+  .dashboard-card-title {
+    font-size: 11px;
+  }
+
+  .dashboard-card-value {
+    font-size: 25px;
+  }
+
+  .dashboard-card-footer {
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+  .dashboard-card {
+    min-height: 128px;
+
+    padding: 14px;
+  }
+
+  .dashboard-card-icon {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 10px;
+  }
+
+  .dashboard-card-value {
+    font-size: 23px;
+  }
+
+  .dashboard-trend {
+    padding: 4px 7px;
+
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-card,
+  .dashboard-card-icon,
+  .dashboard-card::before {
+    transition: none;
+  }
+}

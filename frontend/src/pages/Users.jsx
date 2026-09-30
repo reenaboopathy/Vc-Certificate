@@ -1,0 +1,4 @@
+import CrudPage,{status} from "../components/CrudPage"; import { useData } from "../context/DataContext"; import "./Users.css";
+export default function Users(){const d=useData(); return <CrudPage title="Users" eyebrow="ACCESS CONTROL" description="Manage Admin and Staff access for the certificate operations team." resource="users" rows={d.users} api={d.usersApi} fields={[
+{name:"name",label:"Full Name",required:true},{name:"email",label:"Email",type:"email",required:true},{name:"password",label:"Password",type:"password",required:true,placeholder:"Minimum 6 characters"},{name:"mobile",label:"Mobile",type:"tel"},{name:"role",label:"Role",type:"select",options:["Admin","Staff"]},{name:"status",label:"Status",type:"select",options:["Active","Inactive"]}]} columns={[
+{key:"name",label:"User"},{key:"email",label:"Email"},{key:"mobile",label:"Mobile"},{key:"role",label:"Role"},{key:"status",label:"Status",render:r=>status(r.status)}]}/> }

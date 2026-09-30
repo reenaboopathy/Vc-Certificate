@@ -1,0 +1,108 @@
+/* =========================================================
+   STATUS BADGE
+   ========================================================= */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  min-width: 70px;
+  padding: 5px 10px;
+
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   ACTIVE
+   ========================================================= */
+
+.status-active {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+/* =========================================================
+   EXPIRING SOON
+   ========================================================= */
+
+.status-warning {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+
+/* =========================================================
+   EXPIRED
+   ========================================================= */
+
+.status-expired {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+/* =========================================================
+   PENDING
+   ========================================================= */
+
+.status-pending {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+/* =========================================================
+   CANCELLED
+   ========================================================= */
+
+.status-cancelled {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+/* =========================================================
+   DEFAULT
+   ========================================================= */
+
+.status-default {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.status-badge {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.status-badge:hover {
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .status-badge {
+    min-width: 64px;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}

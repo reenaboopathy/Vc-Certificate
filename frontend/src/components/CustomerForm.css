@@ -1,0 +1,526 @@
+
+/* =========================================================
+   CUSTOMER FORM
+   Modern VC Certificate Management UI
+   ========================================================= */
+
+.customer-form-wrapper {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+/* =========================================================
+   FORM HEADER
+   ========================================================= */
+
+.customer-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.form-eyebrow {
+  display: inline-block;
+  margin-bottom: 7px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.customer-form-header h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 25px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.customer-form-header p {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.form-close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-close-button:hover {
+  color: #dc2626;
+  border-color: #fecaca;
+  background: #fef2f2;
+  transform: rotate(3deg);
+}
+
+/* =========================================================
+   FORM BODY
+   ========================================================= */
+
+.customer-form {
+  padding: 30px 32px 32px;
+}
+
+/* =========================================================
+   FORM SECTION
+   ========================================================= */
+
+.form-section {
+  padding: 24px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.form-section:first-child {
+  padding-top: 0;
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+}
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.form-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 22px;
+}
+
+.section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.form-section-heading h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.form-section-heading p {
+  margin: 4px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 22px;
+}
+
+.form-field {
+  min-width: 0;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+/* =========================================================
+   LABEL
+   ========================================================= */
+
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.form-field label span {
+  margin-left: 3px;
+  color: #ef4444;
+}
+
+/* =========================================================
+   INPUT WRAPPER
+   ========================================================= */
+
+.input-wrapper,
+.textarea-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.input-wrapper svg,
+.textarea-wrapper svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  color: #94a3b8;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: color 0.2s ease;
+}
+
+.textarea-wrapper svg {
+  top: 19px;
+  transform: none;
+}
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.input-wrapper input,
+.input-wrapper select,
+.textarea-wrapper textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dbe2ea;
+  outline: none;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+  height: 46px;
+  padding: 0 14px 0 43px;
+}
+
+.textarea-wrapper textarea {
+  min-height: 95px;
+  padding: 13px 14px 13px 43px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.input-wrapper select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #64748b 50%),
+    linear-gradient(135deg, #64748b 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 20px,
+    calc(100% - 13px) 20px;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+.input-wrapper input::placeholder,
+.textarea-wrapper textarea::placeholder {
+  color: #a8b1bd;
+}
+
+/* =========================================================
+   FOCUS EFFECT
+   ========================================================= */
+
+.input-wrapper:focus-within svg,
+.textarea-wrapper:focus-within svg {
+  color: #2563eb;
+}
+
+.input-wrapper:focus-within input,
+.input-wrapper:focus-within select,
+.textarea-wrapper:focus-within textarea {
+  border-color: #60a5fa;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
+}
+
+/* =========================================================
+   ERROR STATE
+   ========================================================= */
+
+.input-wrapper.has-error input {
+  border-color: #ef4444;
+  background: #fffafa;
+}
+
+.input-wrapper.has-error svg {
+  color: #ef4444;
+}
+
+.input-wrapper.has-error input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+}
+
+.field-error {
+  display: block;
+  margin-top: 6px;
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   NOTES SECTION
+   ========================================================= */
+
+.form-section:last-of-type {
+  padding-bottom: 5px;
+}
+
+.form-section:last-of-type .form-field {
+  width: 100%;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 26px;
+}
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 43px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.primary-button {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.2);
+}
+
+.primary-button:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 7px 18px rgba(37, 99, 235, 0.27);
+  transform: translateY(-1px);
+}
+
+.secondary-button {
+  border: 1px solid #dbe2ea;
+  background: #ffffff;
+  color: #475569;
+}
+
+.secondary-button:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.primary-button:active:not(:disabled),
+.secondary-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   DISABLED BUTTON
+   ========================================================= */
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.form-close-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.customer-form-wrapper ::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.customer-form-wrapper ::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.customer-form-wrapper ::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #cbd5e1;
+}
+
+.customer-form-wrapper ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 800px) {
+  .customer-form-wrapper {
+    border-radius: 14px;
+  }
+
+  .customer-form-header {
+    padding: 24px;
+  }
+
+  .customer-form {
+    padding: 26px 24px 28px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .form-field-full {
+    grid-column: auto;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 560px) {
+  .customer-form-wrapper {
+    border-radius: 12px;
+  }
+
+  .customer-form-header {
+    padding: 20px;
+  }
+
+  .customer-form-header h2 {
+    font-size: 21px;
+  }
+
+  .customer-form-header p {
+    font-size: 12px;
+  }
+
+  .customer-form {
+    padding: 22px 18px 24px;
+  }
+
+  .form-section {
+    padding: 21px 0;
+  }
+
+  .form-section-heading {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .section-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .form-section-heading h3 {
+    font-size: 15px;
+  }
+
+  .form-section-heading p {
+    font-size: 11px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .customer-form-header {
+    padding: 17px;
+  }
+
+  .customer-form {
+    padding: 20px 15px;
+  }
+
+  .customer-form-header h2 {
+    font-size: 19px;
+  }
+
+  .form-close-button {
+    width: 34px;
+    height: 34px;
+  }
+}

@@ -1,0 +1,607 @@
+/* =========================================================
+   CERTIFICATE FORM
+   ========================================================= */
+
+.certificate-form-wrapper {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e5eaf1;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.certificate-form-wrapper .certificate-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #eff6ff, #ffffff);
+  border-bottom: 1px solid #e5eaf1;
+}
+
+.certificate-form-wrapper .form-eyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #2563eb;
+}
+
+.certificate-form-wrapper .certificate-form-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.certificate-form-wrapper .certificate-form-header p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.certificate-form-wrapper .form-close-button {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #64748b;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.certificate-form-wrapper .form-close-button:hover {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.certificate-form-wrapper .certificate-form {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FORM SECTION
+   ========================================================= */
+
+.certificate-form-wrapper .form-section {
+  padding: 28px 32px;
+  border-bottom: 1px solid #edf1f5;
+  box-sizing: border-box;
+}
+
+.certificate-form-wrapper .form-section:last-of-type {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.certificate-form-wrapper .form-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin-bottom: 22px;
+}
+
+.certificate-form-wrapper .section-icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.certificate-form-wrapper .form-section-heading h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.certificate-form-wrapper .form-section-heading p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.certificate-form-wrapper .form-grid {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  column-gap: 24px;
+  row-gap: 20px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.certificate-form-wrapper .form-field {
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.certificate-form-wrapper .form-field label {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.certificate-form-wrapper .form-field label span {
+  margin-left: 4px;
+  color: #ef4444;
+}
+
+
+/* =========================================================
+   INPUT WRAPPER
+   ========================================================= */
+
+.certificate-form-wrapper .input-wrapper {
+  position: relative;
+
+  width: 100%;
+  min-height: 46px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0 13px;
+
+  background: #ffffff;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.certificate-form-wrapper .input-wrapper > svg {
+  flex-shrink: 0;
+  color: #94a3b8;
+}
+
+.certificate-form-wrapper .input-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+  background: #ffffff;
+}
+
+.certificate-form-wrapper .input-wrapper.has-error {
+  border-color: #ef4444;
+}
+
+.certificate-form-wrapper .input-wrapper.has-error:focus-within {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.10);
+}
+
+
+/* =========================================================
+   INPUT + SELECT
+   ========================================================= */
+
+.certificate-form-wrapper .input-wrapper input,
+.certificate-form-wrapper .input-wrapper select {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+
+  padding: 0;
+
+  border: none;
+  outline: none;
+  background: transparent;
+
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 14px;
+
+  box-sizing: border-box;
+}
+
+.certificate-form-wrapper .input-wrapper input::placeholder {
+  color: #a0aec0;
+}
+
+.certificate-form-wrapper .input-wrapper select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  padding-right: 25px;
+}
+
+.certificate-form-wrapper .select-arrow {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  pointer-events: none;
+  color: #64748b;
+}
+
+
+/* =========================================================
+   DATE INPUT
+   ========================================================= */
+
+.certificate-form-wrapper input[type="date"] {
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   NUMBER INPUT
+   ========================================================= */
+
+.certificate-form-wrapper input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.certificate-form-wrapper input[type="number"]::-webkit-inner-spin-button,
+.certificate-form-wrapper input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+}
+
+
+/* =========================================================
+   ERROR + HINT
+   ========================================================= */
+
+.certificate-form-wrapper .field-error {
+  display: block;
+  margin-top: 6px;
+
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.certificate-form-wrapper .field-hint {
+  display: block;
+  margin-top: 6px;
+
+  color: #64748b;
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   FILE UPLOAD
+   ========================================================= */
+
+.certificate-form-wrapper .file-upload-wrapper {
+  position: relative;
+
+  width: 100%;
+  min-height: 78px;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  padding: 14px 16px;
+
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 12px;
+
+  box-sizing: border-box;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.certificate-form-wrapper .file-upload-wrapper:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.certificate-form-wrapper .file-upload-wrapper > svg {
+  flex-shrink: 0;
+  color: #2563eb;
+}
+
+.certificate-form-wrapper .file-upload-wrapper div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.certificate-form-wrapper .file-upload-wrapper strong {
+  overflow: hidden;
+
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.certificate-form-wrapper .file-upload-wrapper span {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.certificate-form-wrapper .file-upload-wrapper input[type="file"] {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.certificate-form-wrapper .form-textarea {
+  width: 100%;
+  min-height: 120px;
+
+  padding: 13px 14px;
+
+  resize: vertical;
+
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+
+  outline: none;
+  background: #ffffff;
+
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.certificate-form-wrapper .form-textarea::placeholder {
+  color: #a0aec0;
+}
+
+.certificate-form-wrapper .form-textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.certificate-form-wrapper .form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  padding: 22px 32px;
+
+  background: #f8fafc;
+  border-top: 1px solid #edf1f5;
+
+  box-sizing: border-box;
+}
+
+.certificate-form-wrapper .secondary-button,
+.certificate-form-wrapper .primary-button {
+  min-height: 44px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 0 18px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+
+/* Secondary */
+
+.certificate-form-wrapper .secondary-button {
+  border: 1px solid #d7dee8;
+  background: #ffffff;
+  color: #475569;
+}
+
+.certificate-form-wrapper .secondary-button:hover:not(:disabled) {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+
+/* Primary */
+
+.certificate-form-wrapper .primary-button {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.20);
+}
+
+.certificate-form-wrapper .primary-button:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 7px 18px rgba(37, 99, 235, 0.25);
+}
+
+
+/* Disabled */
+
+.certificate-form-wrapper .secondary-button:disabled,
+.certificate-form-wrapper .primary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 800px) {
+  .certificate-form-wrapper .certificate-form-header {
+    padding: 24px;
+  }
+
+  .certificate-form-wrapper .form-section {
+    padding: 24px;
+  }
+
+  .certificate-form-wrapper .form-grid {
+    column-gap: 18px;
+    row-gap: 18px;
+  }
+
+  .certificate-form-wrapper .form-actions {
+    padding: 20px 24px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .certificate-form-wrapper {
+    border-radius: 14px;
+  }
+
+  .certificate-form-wrapper .certificate-form-header {
+    padding: 20px;
+  }
+
+  .certificate-form-wrapper .certificate-form-header h2 {
+    font-size: 22px;
+  }
+
+  .certificate-form-wrapper .form-section {
+    padding: 22px 20px;
+  }
+
+  .certificate-form-wrapper .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .certificate-form-wrapper .form-section-heading {
+    gap: 10px;
+  }
+
+  .certificate-form-wrapper .section-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .certificate-form-wrapper .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    padding: 18px 20px;
+  }
+
+  .certificate-form-wrapper .secondary-button,
+  .certificate-form-wrapper .primary-button {
+    width: 100%;
+  }
+}
