@@ -69,7 +69,7 @@ function AppLayout() {
                 }
               />
 
-              <div className={`app-main ${sidebarCollapsed ? "sidebar-main-collapsed" : ""}`}>
+              <div className="app-main">
                 <Navbar />
 
                 <main className="app-content">
@@ -156,7 +156,7 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <BrowserRouter>
       <AuthProvider>
         <DataProvider>
           <AppLayout />

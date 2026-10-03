@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "_id": "admin-seed-001",
+    "name": "Admin",
+    "email": "admin@vcmanagement.com",
+    "mobile": "",
+    "role": "Admin",
+    "status": "Active",
+    "passwordHash": "$2b$10$1eOptYnbA5x4Y8TR2u0Uw..vvZ7Mbfzg5m3nASuQTe9U.6OMeqK/K"
+  }
+]

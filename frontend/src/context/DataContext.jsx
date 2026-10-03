@@ -3,7 +3,7 @@ import { api } from "../services/api";
 import { useAuth } from "./AuthContext";
 
 const DataContext = createContext(null);
-const resources = ["customers","scales","certificates","renewals","followups","payments","invoices","users"];
+const resources = ["customers","scales","certificates","renewals","followups","payments","invoices","users","vcidStocks"];
 
 export function DataProvider({ children }) {
   const { isAuthenticated } = useAuth();
@@ -20,9 +20,11 @@ export function DataProvider({ children }) {
     }
     setLoading(true);
     try {
-      const values = await Promise.all(resources.map((r) => api.get(`/${r}`)));
+      const results = await Promise.allSettled(resources.map((r) => api.get(`/${r}`)));
+      const values = results.map((result) => result.status === "fulfilled" ? result.value : []);
       setData(Object.fromEntries(resources.map((r, i) => [r, Array.isArray(values[i]) ? values[i] : []])));
-      setError("");
+      const failed = results.find((result) => result.status === "rejected");
+      setError(failed ? failed.reason?.message || "Some records could not be loaded" : "");
     } catch (e) {
       setError(e.message);
       if (/unauthorized|invalid|token/i.test(e.message)) {
@@ -46,7 +48,7 @@ export function DataProvider({ children }) {
     ...data, loading, error, refresh: load,
     customersApi: crud("customers"), scalesApi: crud("scales"), certificatesApi: crud("certificates"),
     renewalsApi: crud("renewals"), followupsApi: crud("followups"), paymentsApi: crud("payments"),
-    invoicesApi: crud("invoices"), usersApi: crud("users"),
+    invoicesApi: crud("invoices"), usersApi: crud("users"), vcidStocksApi: crud("vcidStocks"),
   }), [data, loading, error, isAuthenticated]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

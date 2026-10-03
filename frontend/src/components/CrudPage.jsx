@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { Plus, Search, Pencil, Trash2, Eye, X, Download, FileText } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Eye, X, FileText } from "lucide-react";
 
 const empty = {};
-export default function CrudPage({ title, eyebrow, description, resource, rows=[], fields=[], columns=[], api, onView, extraActions }) {
+export default function CrudPage({ title, eyebrow, description, resource, rows=[], fields=[], columns=[], api, onView, extraActions, headerActions }) {
   const [search,setSearch]=useState("");
   const [open,setOpen]=useState(false);
   const [editing,setEditing]=useState(null);
@@ -18,7 +18,7 @@ export default function CrudPage({ title, eyebrow, description, resource, rows=[
   return <div className="page">
     <div className="page-hero">
       <div><div className="eyebrow">{eyebrow}</div><h1>{title}</h1><p>{description}</p></div>
-      <button className="btn btn-primary" onClick={startAdd}><Plus size={18}/> Add New</button>
+      {headerActions ? <div className="hero-actions">{headerActions}<button className="btn btn-primary" onClick={startAdd}><Plus size={18}/> Add New</button></div> : <button className="btn btn-primary" onClick={startAdd}><Plus size={18}/> Add New</button>}
     </div>
     <div className="toolbar card">
       <div className="searchbox"><Search size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={`Search ${title.toLowerCase()}...`}/></div>
@@ -33,7 +33,7 @@ export default function CrudPage({ title, eyebrow, description, resource, rows=[
     </div>
     {open&&<div className="modal-backdrop" onMouseDown={e=>e.target===e.currentTarget&&setOpen(false)}><div className="modal">
       <div className="modal-head"><div><div className="eyebrow">{editing?"EDIT":"NEW"} {title.toUpperCase()}</div><h2>{editing?"Update":"Add"} {title.replace(/s$/,"")}</h2></div><button className="icon-btn" onClick={()=>setOpen(false)}><X size={18}/></button></div>
-      <form onSubmit={save}><div className="form-grid">{fields.map(f=><label className={`field ${f.wide?"wide":""}`} key={f.name}><span>{f.label}</span>{f.type==="select"?<select value={form[f.name]||""} onChange={e=>setForm({...form,[f.name]:e.target.value})} required={f.required}>{f.options.map(o=><option key={o} value={o}>{o}</option>)}</select>:f.type==="textarea"?<textarea rows="3" value={form[f.name]||""} onChange={e=>setForm({...form,[f.name]:e.target.value})} required={f.required}/>:<input type={f.type||"text"} value={form[f.name]||""} onChange={e=>setForm({...form,[f.name]:e.target.value})} required={f.required && !editing} placeholder={f.placeholder}/>}</label>)}</div>{message&&<div className="alert">{message}</div>}<div className="modal-actions"><button type="button" className="btn btn-secondary" onClick={()=>setOpen(false)}>Cancel</button><button className="btn btn-primary" disabled={saving}>{saving?"Saving...":editing?"Update":"Save Record"}</button></div></form>
+      <form onSubmit={save}><div className="form-grid">{fields.map(f=><label className={`field ${f.wide?"wide":""}`} key={f.name}><span>{f.label}</span>{f.type==="select"?<select value={form[f.name]||""} onChange={e=>setForm({...form,[f.name]:e.target.value})} required={f.required}><option value="">Select {f.label}</option>{f.options.map(o=><option key={o} value={o}>{o}</option>)}</select>:f.type==="combobox"?<><input list={`${resource}-${f.name}-options`} value={form[f.name]||""} onChange={e=>setForm({...form,[f.name]:e.target.value})} required={f.required}/><datalist id={`${resource}-${f.name}-options`}>{(f.options||[]).map(o=><option key={o} value={o}/>)}</datalist></>:f.type==="textarea"?<textarea rows="3" value={form[f.name]||""} onChange={e=>setForm({...form,[f.name]:e.target.value})} required={f.required}/>:<input type={f.type||"text"} value={form[f.name]||""} onChange={e=>setForm({...form,[f.name]:e.target.value})} required={f.required && !editing} placeholder={f.placeholder}/>}</label>)}</div>{message&&<div className="alert">{message}</div>}<div className="modal-actions"><button type="button" className="btn btn-secondary" onClick={()=>setOpen(false)}>Cancel</button><button className="btn btn-primary" disabled={saving}>{saving?"Saving...":editing?"Update":"Save Record"}</button></div></form>
     </div></div>}
   </div>
 }

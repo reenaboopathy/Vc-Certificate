@@ -1,75 +1,38 @@
-# VC Certificate Management System — MERN
+# VC Certificate Management System — Original UI + Requested Small Changes
 
 ## What is included
-- React + Vite frontend
-- Node.js + Express backend
-- MongoDB + Mongoose persistence
-- JWT authentication
-- Login is always the first screen
-- Dashboard and all application routes require a valid server-side login session
-- No sample customer, scale, certificate, renewal, follow-up, payment or invoice records are seeded
-- Sidebar collapse/expand layout is synchronized with the main content
+- Original login UI: Email + Password only
+- No sample customer/scale/VCID/certificate/renewal/payment/invoice/follow-up records
+- Admin login is seeded so the original login flow works
+- Customer-first flow for scales, certificates, renewals, payments, follow-ups and invoices
+- Weighing Scales: Scale ID + Scale Name, Location removed
+- Certificates: Add New VCID Stock, available-VCID selection, certification/expiry dates
+- Certificate expiry automatically creates a renewal record with reminder date one day before expiry
+- Mobile responsive UI
 
 ## Login
-The backend creates the initial administrator account automatically on first startup if that email does not already exist in MongoDB.
+Email: `admin@vcmanagement.com`
+Password: `admin123`
 
-Default local credentials in `backend/.env`:
-
-```text
-Email: admin@vcmanager.local
-Password: Admin@12345
-```
-
-Change `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `backend/.env` before using this outside local development.
-
-## Requirements
-- Node.js 18+
-- MongoDB running locally or a MongoDB Atlas connection string
-
-## Backend
-
+## Run in VS Code
+### 1. Backend
 ```bash
 cd backend
 npm install
-npm run dev
+npm start
 ```
+Backend runs on `http://localhost:5000`.
 
-The backend runs on:
-
-```text
-http://localhost:5000
-```
-
-MongoDB is required. Set `MONGODB_URI` in `backend/.env`.
-
-## Frontend
-
-Open another terminal:
-
+### 2. Frontend
+Open a second terminal:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+Open the Vite URL shown in the terminal.
 
-Open:
+## Data persistence
+The bundled local JSON data files start empty for business records, so you can create everything yourself. Records remain after logout/login and remain until you delete them.
 
-```text
-http://localhost:5173/Vc-Certificate/
-```
-
-Expected flow:
-
-```text
-Open application
-      ↓
-    Login
-      ↓
-Valid email + password
-      ↓
-   Dashboard
-      ↓
-All protected modules
-```
-
-Direct access to protected routes without a valid JWT redirects to `/login`.
+For shared/production persistence, add a real `MONGODB_URI` in `backend/.env`. Without MongoDB, the backend falls back to its local JSON store.
