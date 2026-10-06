@@ -1,38 +1,64 @@
-# VC Certificate Management System — Original UI + Requested Small Changes
+# VC Certificate Management — Pro Workflow MERN App
 
-## What is included
-- Original login UI: Email + Password only
-- No sample customer/scale/VCID/certificate/renewal/payment/invoice/follow-up records
-- Admin login is seeded so the original login flow works
-- Customer-first flow for scales, certificates, renewals, payments, follow-ups and invoices
-- Weighing Scales: Scale ID + Scale Name, Location removed
-- Certificates: Add New VCID Stock, available-VCID selection, certification/expiry dates
-- Certificate expiry automatically creates a renewal record with reminder date one day before expiry
-- Mobile responsive UI
+A responsive React + Vite frontend with Node/Express + MongoDB backend for customer, instrument, VCID, certificate, renewal, follow-up, invoice and payment management.
 
-## Login
-Email: `admin@vcmanagement.com`
-Password: `admin123`
+## Core lifecycle
 
-## Run in VS Code
-### 1. Backend
+Customer → Instrument → VCID Stock → Certificate → Issue → Billing → Renewal / Recall
+
+## Local run
+
+### 1) MongoDB
+Use local MongoDB or MongoDB Atlas.
+
+### 2) Backend
+
 ```bash
 cd backend
 npm install
-npm start
+npm run dev
 ```
-Backend runs on `http://localhost:5000`.
 
-### 2. Frontend
-Open a second terminal:
+Default API: `http://localhost:5000`
+
+### 3) Frontend
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Open the Vite URL shown in the terminal.
 
-## Data persistence
-The bundled local JSON data files start empty for business records, so you can create everything yourself. Records remain after logout/login and remain until you delete them.
+Default frontend: `http://localhost:5173/`
 
-For shared/production persistence, add a real `MONGODB_URI` in `backend/.env`. Without MongoDB, the backend falls back to its local JSON store.
+## Environment
+
+Copy `backend/.env.example` to `backend/.env` and set:
+
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/vc_certificate_management
+JWT_SECRET=change-me
+ADMIN_EMAIL=admin@vcmanagement.com
+ADMIN_PASSWORD=admin123
+```
+
+For the frontend, `frontend/.env` may contain:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+## Demo login
+
+Email: `admin@vcmanagement.com`
+Password: `admin123`
+
+The backend bootstraps the Admin account when MongoDB is empty. Business data starts empty.
+
+## Production
+
+- Deploy `backend` as a Node/Express service.
+- Deploy `frontend` as a Vite site (Netlify works well).
+- Set `VITE_API_URL` to the public backend URL + `/api`.
+- Keep secrets out of Git.

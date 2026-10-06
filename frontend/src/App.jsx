@@ -1,167 +1,158 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/ProtectedRoute";
-
+import { useEffect, useMemo, useState } from "react";
+import { BrowserRouter, Navigate, useLocation, useNavigate } from "react-router-dom";
+import {
+  Activity, AlertTriangle, ArrowRight, BarChart3, Bell, CalendarClock, CheckCircle2,
+  ChevronRight, ClipboardList, CreditCard, FileCheck2, FileText, Gauge, LayoutDashboard,
+  LogOut, Menu, PackageCheck, Plus, RefreshCcw, Search, Settings as SettingsIcon,
+  ShieldCheck, SlidersHorizontal, Trash2, UserCircle2, Users, X, Eye, Download,
+  IndianRupee, Building2, History, Smartphone, Mail, Link2, CircleDollarSign
+} from "lucide-react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import { DataProvider } from "./context/DataContext";
+import { DataProvider, useData } from "./context/DataContext";
+import { api } from "./services/api";
+import "./App.css";
 
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Customers from "./pages/Customers";
-import CustomerDetails from "./pages/CustomerDetails";
-import Scales from "./pages/Scales";
-import ScaleDetails from "./pages/ScaleDetails";
-import Certificate from "./pages/Certificates";
-import CertificateDetails from "./pages/CertificateDetails";
-import Renewals from "./pages/Renewals";
-import FollowUps from "./pages/FollowUps";
-import Payments from "./pages/Payments";
-import Invoices from "./pages/Invoices";
-import Reports from "./pages/Reports";
-import Users from "./pages/Users";
-import Settings from "./pages/Settings";
+const NAV = [
+  ["/", "Overview", LayoutDashboard],
+  ["/customers", "Customers", Users],
+  ["/scales", "Instruments", Gauge],
+  ["/certificates", "Certificates", FileCheck2],
+  ["/renewals", "Renewals", RefreshCcw],
+  ["/follow-ups", "Follow-ups", ClipboardList],
+  ["/payments", "Payments", CreditCard],
+  ["/invoices", "Invoices", FileText],
+  ["/reports", "Reports", BarChart3],
+];
 
-function AppLayout() {
+const ADMIN_NAV = [["/users", "Users", UserCircle2], ["/settings", "Settings", SettingsIcon]];
+
+function money(v) { return `₹${Number(v || 0).toLocaleString("en-IN")}`; }
+function fmtDate(v) { return v ? new Date(`${v}T00:00:00`).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"; }
+function daysTo(v) { return Math.ceil((new Date(`${v}T00:00:00`) - new Date()) / 86400000); }
+function initials(name = "") { return name.split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join("").toUpperCase() || "VC"; }
+function badgeClass(label = "") { const s = String(label).toLowerCase(); if (s.includes("overdue") || s.includes("expired") || s.includes("cancel")) return "badge danger"; if (s.includes("pending") || s.includes("due") || s.includes("contact")) return "badge warning"; if (s.includes("active") || s.includes("issued") || s.includes("paid") || s.includes("complete")) return "badge success"; if (s.includes("used") || s.includes("maintenance")) return "badge purple"; return "badge neutral"; }
+
+function App() {
+  return <BrowserRouter><AuthProvider><DataProvider><RoutesRoot /></DataProvider></AuthProvider></BrowserRouter>;
+}
+
+function RoutesRoot() {
   const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div className="full-loading"><ShieldCheck size={28}/><span>Loading VC Manager…</span></div>;
+  return isAuthenticated ? <Workspace/> : <LoginPage/>;
+}
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  if (isLoading) {
-    return (
-      <div className="app-loading">
-        <div className="loading-spinner" />
-        <p>Loading VC Manager...</p>
+function LoginPage() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const submit = async e => { e.preventDefault(); setBusy(true); setError(""); try { await login(email, password); navigate("/", { replace: true }); } catch (err) { setError(err.message); } finally { setBusy(false); } };
+  return <div className="login-page">
+    <section className="login-brand-panel">
+      <div className="brand-lockup"><div className="brand-mark">VC</div><div><b>VC MANAGER</b><span>Calibration & Certificate Operations</span></div></div>
+      <div className="login-copy"><div className="eyebrow light">CONTROLLED WORKFLOW</div><h1>Certificates that stay <em>connected.</em></h1><p>Customer → Instrument → VCID → Certificate → Renewal → Billing. One operational chain instead of disconnected records.</p>
+        <div className="login-bullets"><span><CheckCircle2 size={15}/> Due-date driven renewal queue</span><span><CheckCircle2 size={15}/> Customer & instrument history</span><span><CheckCircle2 size={15}/> Certificate evidence and PDF output</span></div>
       </div>
-    );
-  }
-
-  return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-
-      <Route
-        element={
-          <ProtectedRoute
-            isAuthenticated={isAuthenticated}
-          />
-        }
-      >
-        <Route
-          path="*"
-          element={
-            <div
-              className={`app-shell ${
-                sidebarCollapsed
-                  ? "sidebar-is-collapsed"
-                  : ""
-              }`}
-            >
-              <Sidebar
-                activePath={window.location.pathname}
-                isCollapsed={sidebarCollapsed}
-                onToggle={() =>
-                  setSidebarCollapsed(
-                    (current) => !current
-                  )
-                }
-              />
-
-              <div className="app-main">
-                <Navbar />
-
-                <main className="app-content">
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={<Dashboard />}
-                    />
-
-                    <Route
-                      path="/customers"
-                      element={<Customers />}
-                    />
-
-                    <Route
-                      path="/customers/:id"
-                      element={<CustomerDetails />}
-                    />
-
-                    <Route
-                      path="/scales"
-                      element={<Scales />}
-                    />
-
-                    <Route
-                      path="/scales/:id"
-                      element={<ScaleDetails />}
-                    />
-
-                    <Route
-                      path="/certificates"
-                      element={<Certificate />}
-                    />
-
-                    <Route
-                      path="/certificates/:id"
-                      element={<CertificateDetails />}
-                    />
-
-                    <Route
-                      path="/renewals"
-                      element={<Renewals />}
-                    />
-
-                    <Route
-                      path="/follow-ups"
-                      element={<FollowUps />}
-                    />
-
-                    <Route
-                      path="/payments"
-                      element={<Payments />}
-                    />
-
-                    <Route
-                      path="/invoices"
-                      element={<Invoices />}
-                    />
-
-                    <Route
-                      path="/reports"
-                      element={<Reports />}
-                    />
-
-                    <Route
-                      path="/users"
-                      element={<Users />}
-                    />
-
-                    <Route
-                      path="/settings"
-                      element={<Settings />}
-                    />
-                  </Routes>
-                </main>
-              </div>
-            </div>
-          }
-        />
-      </Route>
-    </Routes>
-  );
+      <div className="login-foot">Built for teams that manage weighing equipment, verification certificates and recurring renewals.</div>
+    </section>
+    <section className="login-form-panel"><div className="auth-card">
+      <div className="eyebrow">SECURE ACCESS</div><h2>Welcome back</h2><p>Sign in to your VC operations workspace.</p>
+      <form onSubmit={submit}>
+        <Field label="Email address"><div className="input-wrap"><Mail size={16}/><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required autoComplete="username"/></div></Field>
+        <Field label="Password"><div className="input-wrap"><ShieldCheck size={16}/><input type="password" value={password} onChange={e=>setPassword(e.target.value)} required autoComplete="current-password"/></div></Field>
+        {error && <div className="form-error">{error}</div>}
+        <button className="btn primary wide" disabled={busy}>{busy ? "Signing in…" : <>Sign in <ArrowRight size={16}/></>}</button>
+      </form>
+      <div className="login-demo"><ShieldCheck size={15}/> Demo login: <b>admin@vcmanagement.com</b> / <b>admin123</b></div>
+    </div></section>
+  </div>
 }
 
-export default function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <DataProvider>
-          <AppLayout />
-        </DataProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  );
+function Workspace() {
+  const { logout } = useAuth();
+  const loc = useLocation();
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const current = loc.pathname;
+  const go = p => { navigate(p); setMobileOpen(false); };
+  let content = <Dashboard/>
+  if (current === "/customers") content = <Customers/>;
+  else if (current.startsWith("/customers/")) content = <Customers/>;
+  else if (current === "/scales") content = <Scales/>;
+  else if (current === "/certificates") content = <Certificates/>;
+  else if (current === "/renewals") content = <Renewals/>;
+  else if (current === "/follow-ups") content = <FollowUps/>;
+  else if (current === "/payments") content = <Payments/>;
+  else if (current === "/invoices") content = <Invoices/>;
+  else if (current === "/reports") content = <Reports/>;
+  else if (current === "/users") content = <UsersPage/>;
+  else if (current === "/settings") content = <SettingsPage/>;
+  return <div className="shell">
+    <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
+      <div className="brand-row"><div className="brand-mark">VC</div><div className="brand-copy"><b>VC MANAGER</b><span>Calibration Operations</span></div><button className="icon-btn mobile-close" onClick={()=>setMobileOpen(false)}><X size={18}/></button></div>
+      <div className="side-scroll"><div className="side-title">WORKSPACE</div>{NAV.map(([path,label,Icon])=><button key={path} className={`nav-item ${current===path ? "active" : ""}`} onClick={()=>go(path)}><Icon size={17}/><span>{label}</span></button>)}<div className="side-title admin">ADMINISTRATION</div>{ADMIN_NAV.map(([path,label,Icon])=><button key={path} className={`nav-item ${current===path ? "active" : ""}`} onClick={()=>go(path)}><Icon size={17}/><span>{label}</span></button>)}</div>
+      <div className="side-bottom"><div className="secure-box"><ShieldCheck size={17}/><div><b>Protected workspace</b><span>Records persist until deleted</span></div></div><button className="logout-btn" onClick={logout}><LogOut size={16}/><span>Sign out</span></button></div>
+    </aside>
+    {mobileOpen && <div className="mobile-overlay" onClick={()=>setMobileOpen(false)}/>} 
+    <div className="main"><header className="topbar"><button className="mobile-menu icon-btn" onClick={()=>setMobileOpen(true)}><Menu size={19}/></button><div className="global-search"><Search size={16}/><input placeholder="Search customers, certificates, instruments…"/></div><div className="top-actions"><button className="icon-btn" onClick={()=>go("/renewals")} title="Renewals"><Bell size={16}/></button><div className="profile"><div className="avatar">AD</div><div><b>Admin</b><span>Administrator</span></div></div></div></header><main className="content">{content}</main></div>
+  </div>
 }
+
+function Field({label, children, wide=false}) { return <label className={`field ${wide ? "wide" : ""}`}><span>{label}</span>{children}</label>; }
+function Modal({title, eyebrow, onClose, children, wide=false}) { return <div className="modal-bg" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><div className={`modal ${wide?"wide-modal":""}`}><div className="modal-head"><div><div className="eyebrow">{eyebrow}</div><h2>{title}</h2></div><button className="icon-btn" onClick={onClose}><X size={18}/></button></div>{children}</div></div>; }
+function EmptyState({icon:Icon=FileCheck2, title, text, action, actionLabel}) { return <div className="empty-state"><div className="empty-icon"><Icon size={24}/></div><b>{title}</b><p>{text}</p>{action && <button className="btn primary" onClick={action}>{actionLabel || "Create"}</button>}</div>; }
+
+function PageHead({eyebrow,title,description,children}) { return <div className="page-head"><div><div className="eyebrow">{eyebrow}</div><h1>{title}</h1><p>{description}</p></div><div className="page-actions">{children}</div></div>; }
+function SearchToolbar({value,setValue,count}) { return <div className="toolbar"><div className="toolbar-search"><Search size={16}/><input value={value} onChange={e=>setValue(e.target.value)} placeholder="Search…"/></div><div className="toolbar-right"><span>{count} records</span><SlidersHorizontal size={15}/></div></div>; }
+function Table({children}) { return <div className="card table-card"><div className="table-scroll"><table className="data-table">{children}</table></div></div>; }
+
+function Dashboard() {
+  const d=useData();
+  const due=d.certificates.filter(c=>{const n=daysTo(c.expiryDate);return n>=0&&n<=30}).sort((a,b)=>a.expiryDate.localeCompare(b.expiryDate));
+  const overdue=d.certificates.filter(c=>daysTo(c.expiryDate)<0);
+  const pending=d.renewals.filter(r=>String(r.status).toLowerCase()==="pending");
+  const revenue=d.payments.filter(p=>String(p.status).toLowerCase()==="paid").reduce((s,p)=>s+Number(p.amount||0),0);
+  return <>
+    <PageHead eyebrow="OPERATIONS COMMAND CENTER" title="Good morning, Admin" description="Run the full customer-to-certificate lifecycle from one workspace."><button className="btn soft" onClick={()=>{}}><PackageCheck size={16}/> VCID stock: {d.vcidStocks.filter(v=>String(v.status).toLowerCase()==="available").length}</button><button className="btn primary" onClick={()=>navigateTo("/certificates")}><Plus size={16}/> New certificate</button></PageHead>
+    <div className="kpi-grid">{[
+      ["Customers",d.customers.length,Users,""],["Instruments",d.scales.length,Gauge,""],["Due in 30 days",due.length,CalendarClock,"warning"],["Overdue",overdue.length,AlertTriangle,"danger"],["Paid revenue",money(revenue),IndianRupee,"success"]
+    ].map(([l,v,I,c])=><div className={`card kpi ${c}`} key={l}><div><span>{l}</span><strong>{v}</strong><small>{l==="Paid revenue"?"Recorded collections":"Live from your records"}</small></div><div className="kpi-icon"><I size={20}/></div></div>)}</div>
+    <div className="card lifecycle-panel"><div className="panel-head"><div><div className="eyebrow">CONTROLLED LIFECYCLE</div><h2>How the work flows</h2></div><span>Every stage stays linked</span></div><div className="lifecycle">{[["Customer","Master record"],["Instrument","Scale / asset"],["VCID","Stock allocation"],["Certificate","Dates + result"],["Issue","Controlled output"],["Billing","Collection"],["Renewal","Recall cycle"]].map(([a,b],i)=><div className="life" key={a}><div className="life-num">{i+1}</div><b>{a}</b><span>{b}</span></div>)}</div></div>
+    <div className="dashboard-grid"><section className="card panel"><div className="panel-head"><div><div className="eyebrow">WORK QUEUE</div><h2>What needs attention</h2></div><button className="text-btn" onClick={()=>navigateTo("/renewals")}>Open renewals <ArrowRight size={13}/></button></div>{[...overdue.slice(0,3),...due.slice(0,3)].length ? [...overdue.slice(0,3),...due.slice(0,3)].slice(0,5).map(c=><div className="queue-row" key={c._id}><div className="main-cell"><b>{c.customerName}</b><span>{c.certificateNumber} · {c.vcid}</span></div><div className="main-cell"><b>{c.scaleId||"Instrument"}</b><span>Expiry {fmtDate(c.expiryDate)}</span></div><div><span className={badgeClass(daysTo(c.expiryDate)<0?"Overdue":"Due soon")}>{daysTo(c.expiryDate)<0?"Overdue":`${daysTo(c.expiryDate)}d left`}</span></div><button className="mini-action" onClick={()=>navigateTo("/certificates")}>View</button></div>) : <EmptyState title="No urgent work" text="Start with a customer. Then link an instrument, allocate a VCID and issue a certificate." action={()=>navigateTo("/customers")} actionLabel="Create customer"/>}</section>
+      <section className="card panel"><div className="panel-head"><div><div className="eyebrow">ACTIVITY</div><h2>Recent operations</h2></div><Activity size={16}/></div>{d.certificates.slice(0,5).map(c=><div className="timeline-item" key={c._id}><div className="timeline-dot">✓</div><div><b>Certificate {c.certificateNumber}</b><span>{c.customerName} · issued {fmtDate(c.verificationDate||c.certificationDate)}</span></div></div>)}{!d.certificates.length && <EmptyState title="Activity will appear here" text="Certificates, payments and renewals will become traceable as you work."/>}</section></div>
+    <div className="card panel"><div className="panel-head"><div><div className="eyebrow">PENDING RENEWALS</div><h2>Recall queue</h2></div><button className="text-btn" onClick={()=>navigateTo("/renewals")}>{pending.length} pending <ArrowRight size={13}/></button></div>{pending.slice(0,4).map(r=><div className="queue-row renew" key={r._id}><div className="main-cell"><b>{r.customerName}</b><span>{r.certificateNumber}</span></div><div className="main-cell"><b>{fmtDate(r.expiryDate)}</b><span>Reminder {fmtDate(r.reminderDate)}</span></div><span className={badgeClass("Pending")}>Pending</span><div className="main-cell"><b>{r.customerMobile||r.customerWhatsapp||r.customerEmail||"No contact"}</b><span>Primary customer contact</span></div></div>)}{!pending.length && <div className="muted center-pad">No renewal records yet. They are created automatically when a certificate is issued.</div>}</div>
+  </>
+}
+function navigateTo(path){ window.history.pushState({},"",path); window.dispatchEvent(new PopStateEvent("popstate")); }
+
+function Customers(){
+  const d=useData(); const [q,setQ]=useState(""); const [open,setOpen]=useState(false); const [selected,setSelected]=useState(null);
+  const rows=d.customers.filter(c=>JSON.stringify(c).toLowerCase().includes(q.toLowerCase()));
+  return <><PageHead eyebrow="CUSTOMER DIRECTORY" title="Customers" description="The master record behind every instrument, certificate and renewal."><button className="btn primary" onClick={()=>setOpen(true)}><Plus size={16}/> Add customer</button></PageHead><SearchToolbar value={q} setValue={setQ} count={rows.length}/><Table><thead><tr><th>Customer</th><th>Contacts</th><th>Instruments</th><th>Certificates</th><th>Renewals</th><th>Status</th><th></th></tr></thead><tbody>{rows.map(c=>{const sc=d.scales.filter(s=>s.customerName===c.customerName).length,cert=d.certificates.filter(x=>x.customerName===c.customerName).length,ren=d.renewals.filter(x=>x.customerName===c.customerName).length;return <tr key={c._id}><td><div className="person"><div className="avatar small">{initials(c.customerName)}</div><div><b>{c.customerName}</b><span>{c.companyName||"Independent customer"}</span></div></div></td><td>{c.mobile||"—"}<span className="subtext">{c.email||""}</span></td><td>{sc}</td><td>{cert}</td><td>{ren}</td><td><span className="badge success">Active</span></td><td><button className="mini-action" onClick={()=>setSelected(c)}>Open</button></td></tr>})}{!rows.length&&<tr><td colSpan="7"><EmptyState title="No customers yet" text="Create your first customer. Every later record will link back here." action={()=>setOpen(true)} actionLabel="Create customer"/></td></tr>}</tbody></Table>
+    {open&&<CustomerModal onClose={()=>setOpen(false)} onSaved={()=>{setOpen(false);d.refresh()}}/>}{selected&&<Customer360 customer={selected} onClose={()=>setSelected(null)}/>}</>
+}
+function CustomerModal({onClose,onSaved}){ const d=useData(); const [form,setForm]=useState({customerName:"",companyName:"",mobile:"",whatsapp:"",email:"",customerType:"Business",address:"",notes:""}); const submit=async e=>{e.preventDefault();await d.customersApi.create(form);onSaved()};return <Modal title="Create customer" eyebrow="MASTER RECORD" onClose={onClose}><form className="modal-body" onSubmit={submit}><div className="form-grid"><Field label="Customer name"><input required value={form.customerName} onChange={e=>setForm({...form,customerName:e.target.value})}/></Field><Field label="Company / shop"><input value={form.companyName} onChange={e=>setForm({...form,companyName:e.target.value})}/></Field><Field label="Mobile"><input required value={form.mobile} onChange={e=>setForm({...form,mobile:e.target.value})}/></Field><Field label="WhatsApp"><input value={form.whatsapp} onChange={e=>setForm({...form,whatsapp:e.target.value})}/></Field><Field label="Email"><input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></Field><Field label="Customer type"><select value={form.customerType} onChange={e=>setForm({...form,customerType:e.target.value})}><option>Business</option><option>Individual</option><option>Dealer</option><option>Other</option></select></Field><Field label="Address" wide><textarea rows="3" value={form.address} onChange={e=>setForm({...form,address:e.target.value})}/></Field></div><div className="modal-actions"><button type="button" className="btn" onClick={onClose}>Cancel</button><button className="btn primary">Save customer</button></div></form></Modal>}
+function Customer360({customer,onClose}){const d=useData();const scales=d.scales.filter(s=>s.customerName===customer.customerName), certs=d.certificates.filter(c=>c.customerName===customer.customerName), rem=d.renewals.filter(r=>r.customerName===customer.customerName);return <Modal title={customer.customerName} eyebrow="CUSTOMER 360" onClose={onClose} wide><div className="modal-body"><div className="identity-grid"><div className="card identity-card"><div className="avatar large">{initials(customer.customerName)}</div><div><h3>{customer.customerName}</h3><p>{customer.companyName||"Independent customer"}</p><div className="chips"><span>{customer.mobile||"No mobile"}</span><span>{customer.email||"No email"}</span></div></div></div><div className="mini-metrics"><div><span>Instruments</span><b>{scales.length}</b></div><div><span>Certificates</span><b>{certs.length}</b></div><div><span>Renewals</span><b>{rem.length}</b></div></div></div><div className="two-panels"><div className="card panel"><div className="eyebrow">INSTRUMENT HISTORY</div>{scales.length?scales.map(s=><div className="list-row" key={s._id}><div><b>{s.scaleName}</b><span>{s.scaleId} · {s.capacity||"Capacity n/a"}</span></div><span className="badge success">{s.status||"Active"}</span></div>):<EmptyState title="No instruments" text="Add an instrument for this customer."/>}</div><div className="card panel"><div className="eyebrow">CERTIFICATE HISTORY</div>{certs.length?certs.map(c=><div className="list-row" key={c._id}><div><b>{c.certificateNumber}</b><span>{c.vcid} · expiry {fmtDate(c.expiryDate)}</span></div><span className={badgeClass(daysTo(c.expiryDate)<0?"Expired":daysTo(c.expiryDate)<=30?"Due soon":"Active")}>{daysTo(c.expiryDate)<0?"Expired":daysTo(c.expiryDate)<=30?"Due soon":"Active"}</span></div>):<EmptyState title="No certificates" text="Issue the first certificate from the Certificates page."/>}</div></div></div></Modal>}
+
+function Scales(){const d=useData();const [open,setOpen]=useState(false);const [q,setQ]=useState("");const rows=d.scales.filter(s=>JSON.stringify(s).toLowerCase().includes(q.toLowerCase()));return <><PageHead eyebrow="INSTRUMENT REGISTER" title="Weighing Scales" description="Register instruments once; certificates always point back to the same asset."><button className="btn primary" onClick={()=>setOpen(true)}><Plus size={16}/> Add instrument</button></PageHead><SearchToolbar value={q} setValue={setQ} count={rows.length}/><Table><thead><tr><th>Instrument</th><th>Customer</th><th>Specification</th><th>Serial / Model</th><th>Status</th></tr></thead><tbody>{rows.map(s=><tr key={s._id}><td><b>{s.scaleName}</b><span className="subtext">{s.scaleId}</span></td><td>{s.customerName}</td><td>{s.capacity||"—"}<span className="subtext">{s.scaleType||""}</span></td><td>{s.serialNumber||"—"}<span className="subtext">{s.model||""}</span></td><td><span className="badge success">{s.status||"Active"}</span></td></tr>)}{!rows.length&&<tr><td colSpan="5"><EmptyState title="No instruments yet" text="Create an instrument against an existing customer." action={()=>setOpen(true)} actionLabel="Add instrument"/></td></tr>}</tbody></Table>{open&&<ScaleModal onClose={()=>setOpen(false)} onSaved={()=>{setOpen(false);d.refresh()}}/>}</>}
+function ScaleModal({onClose,onSaved}){const d=useData();const [form,setForm]=useState({customerName:"",scaleId:"",scaleName:"",scaleType:"Digital",capacity:"",make:"",model:"",serialNumber:"",status:"Active",notes:""});const submit=async e=>{e.preventDefault();if(!d.customers.some(c=>c.customerName===form.customerName))return alert("Please select an existing customer.");await d.scalesApi.create(form);onSaved()};return <Modal title="Add instrument" eyebrow="INSTRUMENT REGISTER" onClose={onClose}><form className="modal-body" onSubmit={submit}><div className="callout"><b>Controlled rule:</b> an instrument cannot create a new customer. Choose one from the existing master list.</div><div className="form-grid" style={{marginTop:15}}><Field label="Existing customer"><input required list="customer-names" value={form.customerName} onChange={e=>setForm({...form,customerName:e.target.value})}/><datalist id="customer-names">{d.customers.map(c=><option key={c._id} value={c.customerName}/>)}</datalist></Field><Field label="Scale ID"><input required value={form.scaleId} onChange={e=>setForm({...form,scaleId:e.target.value})}/></Field><Field label="Scale Name"><input required value={form.scaleName} onChange={e=>setForm({...form,scaleName:e.target.value})}/></Field><Field label="Scale Type"><select value={form.scaleType} onChange={e=>setForm({...form,scaleType:e.target.value})}><option>Digital</option><option>Electronic</option><option>Mechanical</option><option>Platform</option><option>Bench</option></select></Field><Field label="Capacity"><input value={form.capacity} onChange={e=>setForm({...form,capacity:e.target.value})}/></Field><Field label="Make"><input value={form.make} onChange={e=>setForm({...form,make:e.target.value})}/></Field><Field label="Model"><input value={form.model} onChange={e=>setForm({...form,model:e.target.value})}/></Field><Field label="Serial number"><input value={form.serialNumber} onChange={e=>setForm({...form,serialNumber:e.target.value})}/></Field><Field label="Status"><select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}><option>Active</option><option>Maintenance</option><option>Inactive</option></select></Field></div><div className="modal-actions"><button type="button" className="btn" onClick={onClose}>Cancel</button><button className="btn primary">Save instrument</button></div></form></Modal>}
+
+function Certificates(){const d=useData();const [stockOpen,setStockOpen]=useState(false),[wizardOpen,setWizardOpen]=useState(false),[q,setQ]=useState("");const rows=d.certificates.filter(c=>JSON.stringify(c).toLowerCase().includes(q.toLowerCase()));const download=r=>window.open(`${api.base}/certificates/${r._id}/pdf`,"_blank");return <><PageHead eyebrow="CERTIFICATE CONTROL" title="Certificates" description="Connect customer, instrument, VCID, dates and renewal in one controlled issue flow."><button className="btn soft" onClick={()=>setStockOpen(true)}><Plus size={16}/> Add VCID stock</button><button className="btn primary" onClick={()=>setWizardOpen(true)}><Plus size={16}/> Create certificate</button></PageHead><SearchToolbar value={q} setValue={setQ} count={rows.length}/><Table><thead><tr><th>Certificate</th><th>Customer / Instrument</th><th>VCID</th><th>Certification</th><th>Expiry</th><th>Status</th><th></th></tr></thead><tbody>{rows.map(c=>{const days=daysTo(c.expiryDate);const label=days<0?"Expired":days<=30?"Due soon":"Issued";return <tr key={c._id}><td><b>{c.certificateNumber}</b><span className="subtext">Verification certificate</span></td><td><b>{c.customerName}</b><span className="subtext">{c.scaleId||"Instrument"}</span></td><td>{c.vcid}</td><td>{fmtDate(c.verificationDate||c.certificationDate)}</td><td><b>{fmtDate(c.expiryDate)}</b><span className="subtext">{days<0?`${Math.abs(days)} days overdue`: `${days} days remaining`}</span></td><td><span className={badgeClass(label)}>{label}</span></td><td><div className="row-actions"><button className="mini-action" onClick={()=>download(c)}><Download size={13}/> PDF</button></div></td></tr>})}{!rows.length&&<tr><td colSpan="7"><EmptyState title="No certificates yet" text="Follow the controlled flow: Customer → Instrument → VCID → Certificate." action={()=>setWizardOpen(true)} actionLabel="Create certificate"/></td></tr>}</tbody></Table>{stockOpen&&<VcidModal onClose={()=>setStockOpen(false)} onSaved={()=>{setStockOpen(false);d.refresh()}}/>}{wizardOpen&&<CertificateWizard onClose={()=>setWizardOpen(false)} onSaved={()=>{setWizardOpen(false);d.refresh()}}/>}</>}
+function VcidModal({onClose,onSaved}){const d=useData();const [form,setForm]=useState({vcid:"",notes:"",created:new Date().toISOString().slice(0,10)});const [error,setError]=useState("");const submit=async e=>{e.preventDefault();setError("");try{await d.vcidStocksApi.create({vcid:form.vcid.trim(),status:"Available",notes:form.notes,created:form.created});onSaved()}catch(err){setError(err.message)}};return <Modal title="Add VCID stock" eyebrow="VCID INVENTORY" onClose={onClose}><form className="modal-body" onSubmit={submit}><div className="form-grid"><Field label="VCID number"><input required placeholder="VC-2026-0001" value={form.vcid} onChange={e=>setForm({...form,vcid:e.target.value})}/></Field><Field label="Received date"><input type="date" value={form.created} onChange={e=>setForm({...form,created:e.target.value})}/></Field><Field label="Status"><input readOnly value="Available"/></Field><Field label="Notes"><input value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field></div>{error&&<div className="form-error" style={{marginTop:12}}>{error}</div>}<div className="modal-actions"><button type="button" className="btn" onClick={onClose}>Cancel</button><button className="btn primary">Save VCID stock</button></div></form></Modal>}
+function CertificateWizard({onClose,onSaved}){const d=useData();const [step,setStep]=useState(1);const [form,setForm]=useState({customerName:"",scaleId:"",vcid:"",certificateNumber:"",verificationDate:new Date().toISOString().slice(0,10),expiryDate:"",amount:"",status:"Active",notes:""});const available=d.vcidStocks.filter(v=>String(v.status||"Available").toLowerCase()==="available");const linkedScales=d.scales.filter(s=>s.customerName===form.customerName);const next=()=>{if(step===1&&!form.customerName)return alert("Select customer");if(step===1&&!form.scaleId)return alert("Select instrument");if(step===2&&!form.vcid)return alert("Select available VCID");if(step===3&&!form.certificateNumber)return alert("Certificate number is required");if(step===3&&!form.expiryDate)return alert("Expiry date is required");setStep(step+1)};const issue=async()=>{try{const cert=await d.certificatesApi.create({...form,certificateNumber:form.certificateNumber,verificationDate:form.verificationDate,expiryDate:form.expiryDate});if(form.amount){await d.invoicesApi.create({customerName:form.customerName,certificateNumber:form.certificateNumber,invoiceNumber:`INV-${Date.now()}`,invoiceDate:new Date().toISOString().slice(0,10),total:form.amount,status:"Draft"})}await d.refresh();onSaved()}catch(err){alert(err.message)}};return <Modal title="Create certificate" eyebrow="CONTROLLED ISSUE" onClose={onClose} wide><div className="wizard"><div className="wizard-head">{["Customer & instrument","VCID","Certificate","Review & issue"].map((x,i)=><div key={x} className={`wizard-step ${step===i+1?"active":""}`}><span>{i+1}</span><b>{x}</b></div>)}</div><div className="modal-body">{step===1&&<><div className="callout"><b>Rule:</b> certificates never create duplicate customers or instruments. Choose both from master records.</div><div className="form-grid" style={{marginTop:15}}><Field label="Existing customer"><select value={form.customerName} onChange={e=>setForm({...form,customerName:e.target.value,scaleId:""})}><option value="">Select customer</option>{d.customers.map(c=><option key={c._id}>{c.customerName}</option>)}</select></Field><Field label="Instrument"><select value={form.scaleId} onChange={e=>setForm({...form,scaleId:e.target.value})}><option value="">Select instrument</option>{linkedScales.map(s=><option key={s._id} value={s.scaleId}>{s.scaleId} — {s.scaleName}</option>)}</select></Field></div></>}{step===2&&<><div className="callout"><b>VCID control:</b> only available stock can be consumed by an issued certificate.</div><div className="form-grid" style={{marginTop:15}}><Field label="Available VCID"><select value={form.vcid} onChange={e=>setForm({...form,vcid:e.target.value})}><option value="">Select VCID</option>{available.map(v=><option key={v._id}>{v.vcid}</option>)}</select></Field><Field label="Certificate type"><select><option>Verification Certificate</option><option>Calibration Certificate</option><option>Re-Certification</option></select></Field></div></>}{step===3&&<div className="form-grid"><Field label="Certificate number"><input required value={form.certificateNumber} onChange={e=>setForm({...form,certificateNumber:e.target.value})} placeholder="VC-CERT-0001"/></Field><Field label="Certification date"><input type="date" value={form.verificationDate} onChange={e=>setForm({...form,verificationDate:e.target.value})}/></Field><Field label="Expiry date"><input type="date" value={form.expiryDate} onChange={e=>setForm({...form,expiryDate:e.target.value})}/></Field><Field label="Service amount"><input type="number" step="0.01" value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}/></Field><Field label="Status"><select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}><option>Active</option><option>Expiring Soon</option><option>Expired</option></select></Field><Field label="Notes"><textarea rows="3" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/></Field></div>}{step===4&&<div className="review-grid"><div className="review-card"><span>Customer</span><b>{form.customerName}</b><small>{d.customers.find(c=>c.customerName===form.customerName)?.mobile||"No mobile"}</small></div><div className="review-card"><span>Instrument</span><b>{form.scaleId}</b><small>{d.scales.find(s=>s.scaleId===form.scaleId)?.scaleName||""}</small></div><div className="review-card"><span>VCID</span><b>{form.vcid}</b><small>Available stock will become Used</small></div><div className="review-card"><span>Certificate</span><b>{form.certificateNumber}</b><small>{fmtDate(form.verificationDate)} → {fmtDate(form.expiryDate)}</small></div><div className="callout wide"><b>On issue:</b> VCID becomes Used, certificate is stored, a renewal record is created automatically, and the reminder is set one day before expiry. If an amount is entered, a draft invoice is linked to the certificate.</div></div>}<div className="modal-actions">{step>1&&<button className="btn" onClick={()=>setStep(step-1)}>← Back</button>}<button className="btn" onClick={onClose}>Cancel</button>{step<4?<button className="btn primary" onClick={next}>Continue <ChevronRight size={15}/></button>:<button className="btn primary" onClick={issue}><CheckCircle2 size={16}/> Issue certificate</button>}</div></div></div></Modal>}
+
+function Renewals(){const d=useData();const rows=[...d.renewals].sort((a,b)=>String(a.expiryDate).localeCompare(String(b.expiryDate)));const overdue=rows.filter(r=>daysTo(r.expiryDate)<0),soon=rows.filter(r=>daysTo(r.expiryDate)>=0&&daysTo(r.expiryDate)<=30),future=rows.filter(r=>daysTo(r.expiryDate)>30);const update=async(r)=>{const next=r.status==="Pending"?"Contacted":r.status==="Contacted"?"Renewed":"Renewed";await d.renewalsApi.update(r._id,{...r,status:next});await d.refresh()};return <><PageHead eyebrow="RENEWAL & RECALL" title="Renewals" description="Renewals are generated from certificate expiry — not entered as an isolated record."><button className="btn soft" onClick={()=>navigateTo("/certificates")}>Go to certificates <ArrowRight size={15}/></button></PageHead><div className="kpi-grid three">{[["Overdue",overdue.length,"danger"],["Due in 30 days",soon.length,"warning"],["Future queue",future.length,"success"]].map(([l,v,c])=><div className={`card kpi ${c}`} key={l}><div><span>{l}</span><strong>{v}</strong></div><div className="kpi-icon"><RefreshCcw size={18}/></div></div>)}</div><div className="card table-card"><div className="panel-head pad"><div><div className="eyebrow">ACTION QUEUE</div><h2>Recall / renewal work</h2></div><span>{rows.length} linked renewals</span></div><div className="table-scroll"><table className="data-table"><thead><tr><th>Customer</th><th>Certificate</th><th>Expiry</th><th>Reminder</th><th>Contact</th><th>Status</th><th></th></tr></thead><tbody>{rows.map(r=>{const days=daysTo(r.expiryDate);const label=days<0?"Overdue":days===0?"Due today":days<=30?`Due in ${days}d`:`${days}d`;return <tr key={r._id}><td><b>{r.customerName}</b></td><td>{r.certificateNumber}</td><td>{fmtDate(r.expiryDate)}</td><td>{fmtDate(r.reminderDate||r.followUpDate)}</td><td>{r.customerMobile||r.customerWhatsapp||r.customerEmail||"—"}</td><td><span className={badgeClass(label)}>{label}</span></td><td><button className="mini-action" onClick={()=>update(r)}>{r.status||"Pending"}</button></td></tr>})}{!rows.length&&<tr><td colSpan="7"><EmptyState title="Renewal queue is empty" text="Issue a certificate with an expiry date and the renewal record will be created automatically."/></td></tr>}</tbody></table></div></div></>}
+
+function FollowUps(){const d=useData();const [open,setOpen]=useState(false);return <><PageHead eyebrow="CUSTOMER OUTREACH" title="Follow-ups" description="Record contact attempts and next actions against existing customers."><button className="btn primary" onClick={()=>setOpen(true)}><Plus size={16}/> Add follow-up</button></PageHead><Table><thead><tr><th>Customer</th><th>Certificate</th><th>Date</th><th>Method</th><th>Status</th></tr></thead><tbody>{d.followups.map(r=><tr key={r._id}><td>{r.customerName}</td><td>{r.certificateNumber||"—"}</td><td>{fmtDate(r.contactDate)}</td><td>{r.contactMethod||"—"}</td><td><span className={badgeClass(r.status)}>{r.status||"Pending"}</span></td></tr>)}{!d.followups.length&&<tr><td colSpan="5"><EmptyState title="No follow-ups yet" text="Create outreach records linked to existing customers." action={()=>setOpen(true)} actionLabel="Add follow-up"/></td></tr>}</tbody></Table>{open&&<SimpleModal kind="followups" onClose={()=>setOpen(false)} onSaved={()=>{setOpen(false);d.refresh()}}/>}</>}
+function Payments(){const d=useData();const [open,setOpen]=useState(false);return <><PageHead eyebrow="COLLECTIONS" title="Payments" description="Track collections against customers and invoices."><button className="btn primary" onClick={()=>setOpen(true)}><Plus size={16}/> Record payment</button></PageHead><Table><thead><tr><th>Customer</th><th>Invoice</th><th>Amount</th><th>Date</th><th>Method</th><th>Status</th></tr></thead><tbody>{d.payments.map(r=><tr key={r._id}><td>{r.customerName}</td><td>{r.invoiceNumber||"—"}</td><td>{money(r.amount)}</td><td>{fmtDate(r.paymentDate)}</td><td>{r.method||"—"}</td><td><span className={badgeClass(r.status)}>{r.status||"Pending"}</span></td></tr>)}{!d.payments.length&&<tr><td colSpan="6"><EmptyState title="No payments yet" text="Record collections as they happen." action={()=>setOpen(true)} actionLabel="Record payment"/></td></tr>}</tbody></Table>{open&&<SimpleModal kind="payments" onClose={()=>setOpen(false)} onSaved={()=>{setOpen(false);d.refresh()}}/>}</>}
+function Invoices(){const d=useData();const [open,setOpen]=useState(false);return <><PageHead eyebrow="BILLING" title="Invoices" description="Link billing records to the same customer and certificate workflow."><button className="btn primary" onClick={()=>setOpen(true)}><Plus size={16}/> Create invoice</button></PageHead><Table><thead><tr><th>Invoice</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th></tr></thead><tbody>{d.invoices.map(r=><tr key={r._id}><td>{r.invoiceNumber||"—"}</td><td>{r.customerName}</td><td>{fmtDate(r.invoiceDate)}</td><td>{money(r.total)}</td><td><span className={badgeClass(r.status)}>{r.status||"Draft"}</span></td></tr>)}{!d.invoices.length&&<tr><td colSpan="5"><EmptyState title="No invoices yet" text="Create invoices from certificate amounts or directly here." action={()=>setOpen(true)} actionLabel="Create invoice"/></td></tr>}</tbody></Table>{open&&<SimpleModal kind="invoices" onClose={()=>setOpen(false)} onSaved={()=>{setOpen(false);d.refresh()}}/>}</>}
+function SimpleModal({kind,onClose,onSaved}){const d=useData();const [form,setForm]=useState({customerName:d.customers[0]?.customerName||"",certificateNumber:"",contactDate:new Date().toISOString().slice(0,10),contactMethod:"Phone",status:"Pending",notes:"",invoiceNumber:"",amount:"",paymentDate:new Date().toISOString().slice(0,10),method:"UPI",invoiceDate:new Date().toISOString().slice(0,10),total:"",dueDate:""});const set=(k,v)=>setForm(f=>({...f,[k]:v}));const submit=async e=>{e.preventDefault();if(kind==="followups")await d.followupsApi.create(form);if(kind==="payments")await d.paymentsApi.create({...form,customerName:form.customerName});if(kind==="invoices")await d.invoicesApi.create(form);onSaved()};let title=kind==="followups"?"Add follow-up":kind==="payments"?"Record payment":"Create invoice";return <Modal title={title} eyebrow={kind.toUpperCase()} onClose={onClose}><form className="modal-body" onSubmit={submit}><div className="form-grid"><Field label="Customer"><select required value={form.customerName} onChange={e=>set("customerName",e.target.value)}>{d.customers.map(c=><option key={c._id}>{c.customerName}</option>)}</select></Field>{kind==="followups"&&<><Field label="Certificate number"><input value={form.certificateNumber} onChange={e=>set("certificateNumber",e.target.value)}/></Field><Field label="Contact date"><input type="date" value={form.contactDate} onChange={e=>set("contactDate",e.target.value)}/></Field><Field label="Method"><select value={form.contactMethod} onChange={e=>set("contactMethod",e.target.value)}><option>Phone</option><option>WhatsApp</option><option>Email</option><option>Visit</option></select></Field><Field label="Status"><select value={form.status} onChange={e=>set("status",e.target.value)}><option>Pending</option><option>Completed</option><option>No Response</option><option>Callback</option></select></Field><Field label="Notes" wide><textarea rows="3" value={form.notes} onChange={e=>set("notes",e.target.value)}/></Field></>}{kind==="payments"&&<><Field label="Invoice number"><input value={form.invoiceNumber} onChange={e=>set("invoiceNumber",e.target.value)}/></Field><Field label="Amount"><input type="number" step="0.01" value={form.amount} onChange={e=>set("amount",e.target.value)}/></Field><Field label="Payment date"><input type="date" value={form.paymentDate} onChange={e=>set("paymentDate",e.target.value)}/></Field><Field label="Method"><select value={form.method} onChange={e=>set("method",e.target.value)}><option>UPI</option><option>Cash</option><option>Bank Transfer</option><option>Card</option><option>Cheque</option></select></Field><Field label="Status"><select value={form.status} onChange={e=>set("status",e.target.value)}><option>Paid</option><option>Pending</option><option>Partial</option></select></Field></>}{kind==="invoices"&&<><Field label="Invoice number"><input value={form.invoiceNumber} onChange={e=>set("invoiceNumber",e.target.value)}/></Field><Field label="Invoice date"><input type="date" value={form.invoiceDate} onChange={e=>set("invoiceDate",e.target.value)}/></Field><Field label="Due date"><input type="date" value={form.dueDate} onChange={e=>set("dueDate",e.target.value)}/></Field><Field label="Total"><input type="number" step="0.01" value={form.total} onChange={e=>set("total",e.target.value)}/></Field><Field label="Status"><select value={form.status} onChange={e=>set("status",e.target.value)}><option>Draft</option><option>Sent</option><option>Paid</option><option>Overdue</option></select></Field></>}</div><div className="modal-actions"><button type="button" className="btn" onClick={onClose}>Cancel</button><button className="btn primary">Save record</button></div></form></Modal>}
+
+function Reports(){const d=useData();const total=d.certificates.length,active=d.certificates.filter(c=>daysTo(c.expiryDate)>=0).length,expired=d.certificates.filter(c=>daysTo(c.expiryDate)<0).length,available=d.vcidStocks.filter(v=>String(v.status).toLowerCase()==="available").length;return <><PageHead eyebrow="REPORTING" title="Reports" description="Operational visibility across certificates, renewals, instruments and collections."/><div className="kpi-grid"><div className="card kpi"><div><span>Active certificate ratio</span><strong>{total?Math.round(active/total*100):0}%</strong></div><div className="kpi-icon"><FileCheck2 size={18}/></div></div><div className="card kpi danger"><div><span>Expired</span><strong>{expired}</strong></div><div className="kpi-icon"><AlertTriangle size={18}/></div></div><div className="card kpi purple"><div><span>Available VCIDs</span><strong>{available}</strong></div><div className="kpi-icon"><PackageCheck size={18}/></div></div><div className="card kpi success"><div><span>Paid revenue</span><strong>{money(d.payments.filter(p=>p.status==="Paid").reduce((s,p)=>s+Number(p.amount||0),0))}</strong></div><div className="kpi-icon"><CircleDollarSign size={18}/></div></div></div><div className="dashboard-grid"><section className="card panel"><div className="eyebrow">CERTIFICATE HEALTH</div><h2 style={{margin:"8px 0 18px"}}>Lifecycle mix</h2>{[["Active",active,"success"],["Due soon",d.certificates.filter(c=>daysTo(c.expiryDate)>=0&&daysTo(c.expiryDate)<=30).length,"warning"],["Expired",expired,"danger"]].map(([l,v,c])=><div className="progress-row" key={l}><div><span>{l}</span><b>{v}</b></div><div className="bar"><i className={`fill ${c}`} style={{width:`${total?Math.max(4,v/total*100):0}%`}}/></div></div>)}</section><section className="card panel"><div className="eyebrow">RECENT CERTIFICATE ACTIVITY</div>{d.certificates.slice(0,8).map(c=><div className="timeline-item" key={c._id}><div className="timeline-dot">✓</div><div><b>{c.certificateNumber}</b><span>{c.customerName} · {fmtDate(c.expiryDate)}</span></div></div>)}{!d.certificates.length&&<EmptyState title="No certificate activity" text="Create your first certificate to populate reports."/>}</section></div></>}
+function UsersPage(){return <><PageHead eyebrow="ADMINISTRATION" title="Users" description="Access control for the operations workspace."/><div className="card panel"><div className="identity-grid"><div className="identity-card"><div className="avatar large">AD</div><div><h3>Admin</h3><p>Administrator · full workspace access</p><div className="chips"><span>Customers</span><span>Certificates</span><span>Billing</span><span>Reports</span></div></div></div><div className="mini-metrics"><div><span>Role</span><b>Admin</b></div><div><span>Access</span><b>Full</b></div><div><span>Security</span><b>JWT</b></div></div></div></div></>}
+function SettingsPage(){const {logout}=useAuth();const d=useData();const clear=async()=>{if(!confirm("Delete all business data?"))return;for(const key of ["customers","scales","certificates","renewals","followups","payments","invoices","vcidStocks"]){for(const r of d[key]){try{await d[`${key}Api`].remove(r._id)}catch{}}}await d.refresh();alert("All business data cleared")};return <><PageHead eyebrow="SYSTEM" title="Settings" description="Manage recall policy and prototype data controls."/><div className="dashboard-grid"><section className="card panel"><div className="eyebrow">REMINDER POLICY</div><h2 style={{margin:"7px 0 16px"}}>Recall window</h2><Field label="Primary reminder"><select defaultValue="1"><option value="1">1 day before expiry</option><option value="7">7 days before expiry</option><option value="30">30 days before expiry</option></select></Field><div style={{height:12}}/><Field label="Escalation"><select defaultValue="queue"><option value="queue">Overdue → Follow-up queue</option><option value="manager">Overdue → Manager review</option></select></Field></section><section className="card panel"><div className="eyebrow">DATA CONTROL</div><h2 style={{margin:"7px 0"}}>Reset business records</h2><p className="muted">This clears customers, instruments, certificates, renewals, follow-ups, payments, invoices and VCID stock. Admin login remains.</p><button className="btn danger" onClick={clear}><Trash2 size={15}/> Reset all business data</button></section></div><div className="card panel danger-panel"><h3>Sign out</h3><p className="muted">Ends your current session on this device.</p><button className="btn" onClick={logout}><LogOut size={15}/> Sign out</button></div></>}
+
+export default App;
