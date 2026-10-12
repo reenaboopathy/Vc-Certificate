@@ -6,8 +6,9 @@ export default function App() {
   return (
     <iframe
       title="VC Certificate Management Demo"
-      src="/vc-manager-demo.html"
+      src={``${import.meta.env.BASE_URL}vc-manager-demo.html``}"
       style={{ display: "block", width: "100%", height: "100vh", border: 0 }}
     />
   );
 }
+
