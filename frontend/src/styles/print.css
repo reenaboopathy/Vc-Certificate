@@ -1,0 +1,12 @@
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #fff !important; color: #111 !important; }
+  .sidebar, .topbar, .page-actions, .mobile-overlay, .mobile-menu, button { display: none !important; }
+  .main { margin: 0 !important; width: 100% !important; }
+  .content { max-width: none !important; padding: 0 !important; margin: 0 !important; }
+  .card, .kpi { box-shadow: none !important; break-inside: avoid; border-color: #d5dbe3 !important; }
+  .report-layout, .dashboard-grid { grid-template-columns: 1fr 1fr !important; }
+  .page-head { margin-bottom: 16px !important; }
+  .page-head h1 { font-size: 22pt !important; }
+  .bar { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

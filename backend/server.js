@@ -16,11 +16,30 @@ const recordSchema = new mongoose.Schema({}, { strict: false, timestamps: true }
 const recordModels = new Map();
 const mongoModel = (key) => { if (!recordModels.has(key)) recordModels.set(key, mongoose.model(`VC_${key}`, recordSchema, key)); return recordModels.get(key); };
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: "2mb" }));
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 const dataDir = path.join(__dirname, "data");
 fs.mkdirSync(dataDir, { recursive: true });
+// Video-matched demo data API. This endpoint stores the demo's collections
+// persistently in backend/data/demoData.json, independent of browser localStorage.
+const demoDataFile = path.join(dataDir, "demoData.json");
+const emptyDemoData = { customers: [], instruments: [], vcids: [], certificates: [], renewals: [] };
+if (!fs.existsSync(demoDataFile)) fs.writeFileSync(demoDataFile, JSON.stringify(emptyDemoData, null, 2));
+app.get("/api/demo-data", (req, res) => {
+  try { res.json({ ...emptyDemoData, ...JSON.parse(fs.readFileSync(demoDataFile, "utf8") || "{}") }); }
+  catch (e) { res.status(500).json({ message: "Unable to read demo data" }); }
+});
+app.put("/api/demo-data", (req, res) => {
+  try {
+    const body = req.body || {};
+    const safe = {};
+    for (const key of Object.keys(emptyDemoData)) safe[key] = Array.isArray(body[key]) ? body[key] : [];
+    fs.writeFileSync(demoDataFile, JSON.stringify(safe, null, 2));
+    res.json({ ok: true, savedAt: new Date().toISOString() });
+  } catch (e) { res.status(500).json({ message: "Unable to save demo data" }); }
+});
+
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -177,7 +196,7 @@ app.get("/", (req, res) => res.json({
   mode: process.env.MONGODB_URI || process.env.MONGO_URI ? "mongodb" : "local-json",
 }));
 
-app.get("/api/health", (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
+app.get("/api/health", (req, res) => res.json({ ok: true, database: mongoEnabled ? "mongodb" : "local-json-development-only", persistentStorage: mongoEnabled, time: new Date().toISOString() }));
 
 app.get("/api/auth/status", async (req, res) => {
   try {
@@ -361,12 +380,23 @@ async function ensureAdminUser() {
 
 (async () => {
   try {
+    if (process.env.NODE_ENV === "production") {
+      if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+        throw new Error("Set JWT_SECRET to a random value at least 32 characters long in production.");
+      }
+      if (!process.env.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD === "admin123" || process.env.ADMIN_PASSWORD.length < 12) {
+        throw new Error("Set ADMIN_PASSWORD to a strong password of at least 12 characters in production.");
+      }
+    }
     const connected = await connectDB();
     mongoEnabled = Boolean(connected);
+    if (process.env.NODE_ENV === "production" && !mongoEnabled) {
+      throw new Error("Production requires MongoDB. Set MONGODB_URI before deploying.");
+    }
     await ensureAdminUser();
+    app.listen(PORT, () => console.log(`Server running on port ${PORT} (${mongoEnabled ? "MongoDB shared persistence" : "local JSON development mode"})`));
   } catch (error) {
-    console.error("Startup initialization failed:", error.message);
-  } finally {
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT} (${mongoEnabled ? "MongoDB" : "local JSON"})`));
+    console.error("Startup failed:", error.message);
+    process.exit(1);
   }
 })();

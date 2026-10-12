@@ -1,64 +1,37 @@
-# VC Certificate Management — Pro Workflow MERN App
+# VC Certificate Management — Video-matched full-stack demo
 
-A responsive React + Vite frontend with Node/Express + MongoDB backend for customer, instrument, VCID, certificate, renewal, follow-up, invoice and payment management.
+This project displays the supplied demo UI in the frontend and adds a backend API for persistent demo records.
 
-## Core lifecycle
+## Requirements
+- Node.js 18+ (npm included)
+- Windows PowerShell users: use `npm.cmd` if PowerShell blocks `npm.ps1`
+- MongoDB is **not required for this demo**. Demo records are saved in `backend/data/demoData.json` until manually deleted.
 
-Customer → Instrument → VCID Stock → Certificate → Issue → Billing → Renewal / Recall
+## Run in VS Code
+Open this folder in VS Code. Open two terminals.
 
-## Local run
-
-### 1) MongoDB
-Use local MongoDB or MongoDB Atlas.
-
-### 2) Backend
-
-```bash
+### Terminal 1 — backend
+```powershell
 cd backend
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
+Backend runs on `http://localhost:5000`.
 
-Default API: `http://localhost:5000`
-
-### 3) Frontend
-
-```bash
+### Terminal 2 — frontend
+```powershell
 cd frontend
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
+Open the Vite URL shown in the terminal (normally `http://localhost:5173`).
 
-Default frontend: `http://localhost:5173/`
+## What works
+- Video-matched demo UI
+- Add/edit/delete customers, instruments, VCID stock, certificates and renewals
+- Certificate creation automatically adds a renewal entry
+- Renewal status actions and CSV report export
+- Frontend synchronizes demo records with backend API; backend JSON persistence survives browser refresh/restart
 
-## Environment
-
-Copy `backend/.env.example` to `backend/.env` and set:
-
-```env
-PORT=5000
-MONGODB_URI=mongodb://127.0.0.1:27017/vc_certificate_management
-JWT_SECRET=change-me
-ADMIN_EMAIL=admin@vcmanagement.com
-ADMIN_PASSWORD=admin123
-```
-
-For the frontend, `frontend/.env` may contain:
-
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
-## Demo login
-
-Email: `admin@vcmanagement.com`
-Password: `admin123`
-
-The backend bootstraps the Admin account when MongoDB is empty. Business data starts empty.
-
-## Production
-
-- Deploy `backend` as a Node/Express service.
-- Deploy `frontend` as a Vite site (Netlify works well).
-- Set `VITE_API_URL` to the public backend URL + `/api`.
-- Keep secrets out of Git.
+## Important
+This is a working local demo, not a deployed production system. Uploaded certificate files are stored as browser data URLs in demo records; keep demo uploads small (the UI enforces a 3 MB limit). The existing backend's MongoDB/auth CRUD routes are included from the source project, but this demo screen uses the dedicated `/api/demo-data` endpoint and JSON persistence.

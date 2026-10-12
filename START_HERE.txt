@@ -1,0 +1,15 @@
+VC MANAGER DEMO — START HERE
+
+1) Open this extracted folder in VS Code.
+2) Terminal 1:
+   cd backend
+   npm.cmd install
+   npm.cmd run dev
+3) Terminal 2:
+   cd frontend
+   npm.cmd install
+   npm.cmd run dev
+4) Open the localhost URL printed by Vite.
+
+Keep both terminals running. Demo records save to backend/data/demoData.json.
+If npm.ps1 execution policy errors, use npm.cmd exactly as above.

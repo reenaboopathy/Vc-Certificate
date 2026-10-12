@@ -1,0 +1,32 @@
+{
+  "customers": [],
+  "instruments": [],
+  "vcids": [
+    {
+      "id": "mv54bosnl9ro0",
+      "customerId": "mv54alzbyprml",
+      "cvNumber": "CV12",
+      "date": "2026-10-13",
+      "applicationNumber": "12",
+      "machineNumber": "dd",
+      "expiryDate": "2026-10-13",
+      "reminderDate": "2026-10-20",
+      "createdAt": "2026-10-12T10:37:37.223Z"
+    }
+  ],
+  "certificates": [],
+  "renewals": [
+    {
+      "id": "mv54cqyuhdyq7",
+      "customerId": "mv54alzbyprml",
+      "vcid": "1234",
+      "certificateId": "mv54cqyueenh8",
+      "instrumentId": "mv54b7r5gu9b1",
+      "quarter": "26D",
+      "renewalDate": "2026-10-14",
+      "status": "Contacted",
+      "notes": "Automatically created from certificate 1234",
+      "createdAt": "2026-10-12T10:38:26.694Z"
+    }
+  ]
+}
