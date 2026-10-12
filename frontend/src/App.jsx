@@ -1,17 +1,41 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
-import React from "react";
+function ProtectedRoutes() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : <Login />
+        }
+      />
+      <Route
+        path="/*"
+        element={
+          isAuthenticated ? (
+            <Dashboard />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+    </Routes>
+  );
+}
 
 export default function App() {
   return (
-    <iframe
-      title="VC Certificate Management Demo"
-      src={`${import.meta.env.BASE_URL}vc-manager-demo.html`}
-      style={{
-        display: "block",
-        width: "100%",
-        height: "100vh",
-        border: 0,
-      }}
-    />
+    <BrowserRouter basename="/Vc-Certificate">
+      <AuthProvider>
+        <ProtectedRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
