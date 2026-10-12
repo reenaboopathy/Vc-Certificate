@@ -7,19 +7,7 @@ import { money, status } from "../components/CrudPage";
 import "./Dashboard.css";
 
 export default function Dashboard(){
- const data = useData();
-const d = data ?? {
-  customers: [],
-  scales: [],
-  certificates: [],
-  renewals: [],
-  payments: [],
-  followups: [],
-  invoices: [],
-  users: [],
-  vcidStocks: [],
-};
-const [stats, setStats] = useState(null);
+ const d=useData(); const [stats,setStats]=useState(null);
  useEffect(()=>{api.get("/dashboard").then(setStats).catch(()=>{})},[d.customers.length,d.certificates.length,d.payments.length,d.renewals.length]);
  const cards=[
   ["Customers",stats?.customers??d.customers.length,Users,"/customers"],
