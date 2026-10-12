@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { DataProvider } from "./context/DataContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 
@@ -34,7 +35,9 @@ export default function App() {
   return (
     <BrowserRouter basename="/Vc-Certificate">
       <AuthProvider>
-        <ProtectedRoutes />
+        <DataProvider>
+          <ProtectedRoutes />
+        </DataProvider>
       </AuthProvider>
     </BrowserRouter>
   );
